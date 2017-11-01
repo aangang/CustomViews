@@ -1,5 +1,6 @@
 package com.aaangang.customviews;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,9 +13,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import com.aaangang.customviews.activitys.MyViewFst;
+import com.aaangang.customviews.utils.Tools;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    Intent mIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +101,26 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_send) {
 
+        }else if (id == R.id.myview1) {
+            Tools.log("myview1");
+            Tools.toast(MainActivity.this,"myview 1");
+            mIntent = new Intent(MainActivity.this, MyViewFst.class);
+            startActivity(mIntent);
+        }else if (id == R.id.myview2) {
+            Tools.log("myview2");
+            Tools.toast(MainActivity.this,"myview 2");
+        }else if (id == R.id.myview3) {
+            Tools.log("myview3");
+            Tools.toast(MainActivity.this,"myview 3");
+        }else if (id == R.id.myview4) {
+            Tools.log("myview4");
+            Tools.toast(MainActivity.this,"myview 4");
+        }else if (id == R.id.myview5) {
+            Tools.log("myview5");
+            Tools.toast(MainActivity.this,"myview 5");
+        }else if (id == R.id.myview6) {
+            Tools.log("myview6");
+            Tools.toast(MainActivity.this,"myview 6");
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
