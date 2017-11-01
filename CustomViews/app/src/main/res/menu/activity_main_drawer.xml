@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_camera"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="Import" />
+        <item
+            android:id="@+id/nav_gallery"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="Gallery" />
+        <item
+            android:id="@+id/nav_slideshow"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="Slideshow" />
+        <item
+            android:id="@+id/nav_manage"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Tools" />
+    </group>
+
+    <item android:title="myviews">
+        <menu>
+            <item
+                android:id="@+id/myview1"
+                android:icon="@drawable/icon1"
+                android:title="view1" />
+            <item
+                android:id="@+id/myview2"
+                android:icon="@drawable/icon2"
+                android:title="view2" />
+            <item
+                android:id="@+id/myview3"
+                android:icon="@drawable/icon3"
+                android:title="view3" />
+            <item
+                android:id="@+id/myview4"
+                android:icon="@drawable/icon4"
+                android:title="view4" />
+            <item
+                android:id="@+id/myview5"
+                android:icon="@drawable/icon5"
+                android:title="view5" />
+            <item
+                android:id="@+id/myview6"
+                android:icon="@drawable/icon6"
+                android:title="view6" />
+            <item
+                android:id="@+id/myview7"
+                android:icon="@drawable/icon7"
+                android:title="view7" />
+            <item
+                android:id="@+id/myview8"
+                android:icon="@drawable/icon8"
+                android:title="view8" />
+            <item
+                android:id="@+id/myview9"
+                android:icon="@drawable/icon9"
+                android:title="view9" />
+            <item
+                android:id="@+id/myview10"
+                android:icon="@drawable/icon10"
+                android:title="view10" />
+        </menu>
+    </item>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Share" />
+            <item
+                android:id="@+id/nav_send"
+                android:icon="@drawable/ic_menu_send"
+                android:title="Send" />
+        </menu>
+    </item>
+
+</menu>
