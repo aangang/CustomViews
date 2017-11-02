@@ -22,6 +22,10 @@
             android:name=".activitys.MyViewFst"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
+        <activity
+            android:name=".activitys.MyViewScd"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>

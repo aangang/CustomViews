@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.aaangang.customviews.activitys.MyViewFst;
+import com.aaangang.customviews.activitys.MyViewScd;
 import com.aaangang.customviews.utils.Tools;
 
 public class MainActivity extends AppCompatActivity
@@ -109,6 +110,8 @@ public class MainActivity extends AppCompatActivity
         }else if (id == R.id.myview2) {
             Tools.log("myview2");
             Tools.toast(MainActivity.this,"myview 2");
+            mIntent = new Intent(MainActivity.this, MyViewScd.class);
+            startActivity(mIntent);
         }else if (id == R.id.myview3) {
             Tools.log("myview3");
             Tools.toast(MainActivity.this,"myview 3");

@@ -265,11 +265,127 @@ restore	    回滚到上一次保存的状态
 translate	相对于当前位置位移
 rotate	    旋转
 
-
-
-
-
-
-
     */
+
+
+//Canvas之画布操作 ####################################################################
+/*
+    1.画布操作
+    为什么要有画布操作？
+    画布操作可以帮助我们用更加容易理解的方式制作图形。
+    例如： 从坐标原点为起点，绘制一个长度为20dp，与水平线夹角为30度的线段怎么做？
+    按照我们通常的想法(被常年训练出来的数学思维)，就是先使用三角函数计算出线段结束点的坐标，然后调用drawLine即可。
+    然而这是否是被固有思维禁锢了？
+    假设我们先绘制一个长度为20dp的水平线，然后将这条水平线旋转30度，则最终看起来效果是相同的，而且不用进行三角函数计算，这样是否更加简单了一点呢？
+
+合理的使用画布操作可以帮助你用更容易理解的方式创作你想要的效果，这也是画布操作存在的原因。
+PS: 所有的画布操作都只影响后续的绘制，对之前已经绘制过的内容没有影响。
+⑴位移(translate)
+translate是坐标系的移动，可以为图形绘制选择一个合适的坐标系。 请注意，位移是基于当前位置移动，而不是每次基于屏幕左上角的(0,0)点移动，如下：
+        // 省略了创建画笔的代码
+        // 在坐标原点绘制一个黑色圆形
+        mPaint.setColor(Color.BLACK);
+        canvas.translate(200,200);
+        canvas.drawCircle(0,0,100,mPaint);
+        // 在坐标原点绘制一个蓝色圆形
+        mPaint.setColor(Color.BLUE);
+        canvas.translate(200,200);
+        canvas.drawCircle(0,0,100,mPaint);
+我们首先将坐标系移动一段距离绘制一个圆形，之后再移动一段距离绘制一个圆形，两次移动是可叠加的。
+
+⑵缩放(scale)
+缩放提供了两个方法，如下：
+ public void scale (float sx, float sy)
+ public final void scale (float sx, float sy, float px, float py)
+这两个方法中前两个参数是相同的分别为x轴和y轴的缩放比例。而第二种方法比前一种多了两个参数，用来控制缩放中心位置的。
+缩放比例(sx,sy)取值范围详解：
+取值范围(n)	说明
+    [-∞, -1)	  先根据缩放中心放大n倍，再根据中心轴进行翻转
+    -1	          根据缩放中心轴进行翻转
+    (-1, 0)	      先根据缩放中心缩小到n，再根据中心轴进行翻转
+    0	          不会显示，若sx为0，则宽度为0，不会显示，sy同理
+    (0, 1)	      根据缩放中心缩小到n
+    1	          没有变化
+    (1, +∞)	  根据缩放中心放大n倍
+缩放的中心默认为坐标原点,而缩放中心轴就是坐标轴
+// 将坐标系原点移动到画布正中心
+        canvas.translate(mWidth / 2, mHeight / 2);
+        RectF rect = new RectF(0,-400,400,0);   // 矩形区域
+        mPaint.setColor(Color.BLACK);           // 绘制黑色矩形
+        canvas.drawRect(rect,mPaint);
+        canvas.scale(0.5f,0.5f);                // 画布缩放
+        mPaint.setColor(Color.BLUE);            // 绘制蓝色矩形
+        canvas.drawRect(rect,mPaint);
+
+接下来我们使用第二种方法让缩放中心位置稍微改变一下，如下：
+        // 将坐标系原点移动到画布正中心
+        canvas.translate(mWidth / 2, mHeight / 2);
+        RectF rect = new RectF(0,-400,400,0);   // 矩形区域
+        mPaint.setColor(Color.BLACK);           // 绘制黑色矩形
+        canvas.drawRect(rect,mPaint);
+        canvas.scale(0.5f,0.5f,200,0);          // 画布缩放  <-- 缩放中心向右偏移了200个单位
+        mPaint.setColor(Color.BLUE);            // 绘制蓝色矩形
+        canvas.drawRect(rect,mPaint);
+
+和位移(translate)一样，缩放也是可以叠加的。
+   canvas.scale(0.5f,0.5f);
+   canvas.scale(0.5f,0.1f);
+调用两次缩放则 x轴实际缩放为0.5x0.5=0.25 y轴实际缩放为0.5x0.1=0.05
+
+⑶旋转(rotate)
+旋转提供了两种方法：
+  public void rotate (float degrees)
+  public final void rotate (float degrees, float px, float py)
+和缩放一样，第二种方法多出来的两个参数依旧是控制旋转中心点的。
+默认的旋转中心依旧是坐标原点：
+        // 将坐标系原点移动到画布正中心
+        canvas.translate(mWidth / 2, mHeight / 2);
+        RectF rect = new RectF(0,-400,400,0);   // 矩形区域
+        mPaint.setColor(Color.BLACK);           // 绘制黑色矩形
+        canvas.drawRect(rect,mPaint);
+        canvas.rotate(180);                     // 旋转180度 <-- 默认旋转中心为原点
+        mPaint.setColor(Color.BLUE);            // 绘制蓝色矩形
+        canvas.drawRect(rect,mPaint);
+
+旋转也是可叠加的
+     canvas.rotate(180);
+     canvas.rotate(20);
+调用两次旋转，则实际的旋转角度为180+20=200度。
+为了演示这一个效果，我做了一个不明觉厉的东西：
+        // 将坐标系原点移动到画布正中心
+        canvas.translate(mWidth / 2, mHeight / 2);
+        canvas.drawCircle(0,0,400,mPaint);          // 绘制两个圆形
+        canvas.drawCircle(0,0,380,mPaint);
+        for (int i=0; i<=360; i+=10){               // 绘制圆形之间的连接线
+            canvas.drawLine(0,380,0,400,mPaint);
+            canvas.rotate(10);
+        }
+
+
+
+
+
+
+
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
