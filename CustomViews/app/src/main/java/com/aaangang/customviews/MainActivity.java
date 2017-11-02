@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.aaangang.customviews.activitys.MyViewFivBezier;
 import com.aaangang.customviews.activitys.MyViewForthPath;
 import com.aaangang.customviews.activitys.MyViewFst;
 import com.aaangang.customviews.activitys.MyViewScd;
@@ -127,6 +128,8 @@ public class MainActivity extends AppCompatActivity
         }else if (id == R.id.myview5) {
             Tools.log("myview5");
             Tools.toast(MainActivity.this,"myview 5");
+            mIntent = new Intent(MainActivity.this, MyViewFivBezier.class);
+            startActivity(mIntent);
         }else if (id == R.id.myview6) {
             Tools.log("myview6");
             Tools.toast(MainActivity.this,"myview 6");

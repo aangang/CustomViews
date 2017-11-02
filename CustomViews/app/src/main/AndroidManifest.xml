@@ -34,6 +34,10 @@
             android:name=".activitys.MyViewForthPath"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
+        <activity
+            android:name=".activitys.MyViewFivBezier"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>
