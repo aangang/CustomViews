@@ -18,6 +18,7 @@ public class PathView extends View {
 
     private int mWidth,mHeight;
     private Paint mPaint = new Paint();
+    private Paint basePaint = new Paint();
 
     public PathView(Context context){
         this(context,null);
@@ -27,7 +28,11 @@ public class PathView extends View {
         super(context,attrs);
         mPaint.setColor(Color.GREEN);
         mPaint.setStyle(Paint.Style.STROKE);
-        mPaint.setStrokeWidth(10);
+        mPaint.setStrokeWidth(5);
+
+        basePaint.setColor(Color.GRAY);
+        basePaint.setStrokeWidth(5);
+        basePaint.setStyle(Paint.Style.STROKE);
     }
 
     @Override
@@ -40,16 +45,53 @@ public class PathView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        //绘制坐标
+        canvas.translate(mWidth/2,mHeight/2);
+        drawBaseLines(canvas);
 
         Path path = new Path();
-        path.moveTo(100,100);
-        path.lineTo(200,200);
-        path.lineTo(200,500);
-        path.close();
+        path.addRect(100,100,300,300, Path.Direction.CW);
         canvas.drawPath(path,mPaint);
+
+        Path path1 = new Path();
+        path1.moveTo(100,-100);
+        path1.lineTo(200,-200);
+        RectF oval = new RectF(100,-300,300,-100);
+        path1.addArc(oval,60,180);
+        canvas.drawPath(path1,mPaint);
+
+        Path path2 = new Path();
+        path2.moveTo(-100,-100);
+        path2.lineTo(-200,-200);
+        RectF oval1 = new RectF(-300,-300,-100,-100);
+        path2.arcTo(oval1,60,180);
+        canvas.drawPath(path2,mPaint);
 
     }
 
+    private void drawBaseLines(Canvas canvas){
+        //canvas.translate(mWidth/2,mHeight/2);
+
+        canvas.drawLine(0,-mHeight/2,0,mHeight/2,basePaint);
+        canvas.drawLine(-mWidth/2,0,mWidth/2,0,basePaint);
+
+        canvas.drawLine(mWidth/2-20,-20,mWidth/2,0,basePaint);
+        canvas.drawLine(mWidth/2-20,20,mWidth/2,0,basePaint);
+
+        canvas.drawLine(-20,mHeight/2-20,0,mHeight/2,basePaint);
+        canvas.drawLine(0,mHeight/2,20,mHeight/2-20,basePaint);
+        int tmpWid=0,tmpHgt=0;
+        for(int i = 0;tmpWid<mWidth/2;i++){
+            canvas.drawLine(tmpWid,0,tmpWid,-20,basePaint);
+            canvas.drawLine(-tmpWid,0,-tmpWid,-20,basePaint);
+            tmpWid +=50;
+        }
+        for(int i = 0;tmpHgt<mHeight/2;i++){
+            canvas.drawLine(0,-tmpHgt,20,-tmpHgt,basePaint);
+            canvas.drawLine(0,tmpHgt,20,tmpHgt,basePaint);
+            tmpHgt +=50;
+        }
+    }
 
 
 }

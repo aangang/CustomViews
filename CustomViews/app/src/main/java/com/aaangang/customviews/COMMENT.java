@@ -628,21 +628,161 @@ Path使用方法详解
         mPaint.setColor(Color.BLACK);           // 画笔颜色 - 黑色
         mPaint.setStyle(Paint.Style.STROKE);    // 填充模式 - 描边
         mPaint.setStrokeWidth(10);              // 边框宽度 - 10
+lineTo：
+方法预览：
+public void lineTo (float x, float y)
+首先讲解的的LineTo，为啥先讲解这个呢？
+是因为moveTo、 setLastPoint、 close都无法直接看到效果，借助有具现化效果的lineTo才能让这些方法现出原形。
+lineTo很简单，只有一个方法，作用也很容易理解，line嘛，顾名思义就是一条线。
+俗话(数学书上)说，两点确定一条直线，但是看参数明显只给了一个点的坐标吧(这不按常理出牌啊)。
+再仔细一看，这个lineTo除了line外还有一个to呢，to翻译过来就是“至”，到某个地方的意思，lineTo难道是指从某个点到参数坐标点之间连一条线？
+没错，你猜对了，但是这某个点又是哪里呢？
+前面我们提到过Path可以用来描述一个图像的轮廓，图像的轮廓通常都是用一条线构成的，所以这里的某个点就
+是上次操作结束的点，如果没有进行过操作则默认点为坐标原点。
 
+moveTo 和 setLastPoint：
+方法预览：
+        // moveTo
+        public void moveTo (float x, float y)
+        // setLastPoint
+        public void setLastPoint (float dx, float dy)
+这两个方法虽然在作用上有相似之处，但实际上却是完全不同的两个东东，具体参照下表：
+方法名	简介	是否影响之前的操作	是否影响之后操作
+moveTo	移动下一次操作的起点位置	否	是
+setLastPoint	设置之前操作的最后一个点位置	是	是
+废话不多说，直接上代码：
+        canvas.translate(mWidth / 2, mHeight / 2);  // 移动坐标系到屏幕中心
+        Path path = new Path();                     // 创建Path
+        path.lineTo(200, 200);                      // lineTo
+        path.moveTo(200,100);                       // moveTo
+        path.lineTo(200,0);                         // lineTo
+        canvas.drawPath(path, mPaint);              // 绘制Path
+moveTo只改变下次操作的起点，在执行完第一次LineTo的时候，本来的默认点位置是A(200,200),
+但是moveTo将其改变成为了C(200,100),所以在第二次调用lineTo的时候就是连接C(200,100) 到 B(200,0) 之间的直线
 
+下面是setLastPoint的示例：
+        canvas.translate(mWidth / 2, mHeight / 2);  // 移动坐标系到屏幕中心
+        Path path = new Path();                     // 创建Path
+        path.lineTo(200, 200);                      // lineTo
+        path.setLastPoint(200,100);                 // setLastPoint
+        path.lineTo(200,0);                         // lineTo
+        canvas.drawPath(path, mPaint);              // 绘制Path
+setLastPoint是重置上一次操作的最后一个点，在执行完第一次的lineTo的时候，最后一个点是A(200,200),而setLastPoint更改最后一个点
+为C(200,100),所以在实际执行的时候，第一次的lineTo就不是从原点O到A(200,200)的连线了，而变成了从原点O到C(200,100)之间的连线了。
+close
+方法预览：
+        public void close ()
+close方法用于连接当前最后一个点和最初的一个点(如果两个点不重合的话)，最终形成一个封闭的图形。
 
+第2组: addXxx与arcTo
+这次内容主要是在Path中添加基本图形，重点区分addArc与arcTo。
+第一类(基本形状)
+方法预览：
+// 第一类(基本形状)
+    // 圆形
+    public void addCircle (float x, float y, float radius, Path.Direction dir)
+    // 椭圆
+    public void addOval (RectF oval, Path.Direction dir)
+    // 矩形
+    public void addRect (float left, float top, float right, float bottom, Path.Direction dir)
+    public void addRect (RectF rect, Path.Direction dir)
+    // 圆角矩形
+    public void addRoundRect (RectF rect, float[] radii, Path.Direction dir)
+    public void addRoundRect (RectF rect, float rx, float ry, Path.Direction dir)
+这一类就是在path中添加一个基本形状，基本形状部分和前面所讲的绘制基本形状并无太大差别
+仔细观察一下第一类的方法，无一例外，在最后都有一个_Path.Direction_，这是一个什么神奇的东东？
+Direction的意思是 方向，趋势。 点进去看一下会发现Direction是一个枚举(Enum)类型，里面只有两个枚举常量，如下：
+类型	解释	翻译
+CW	clockwise	顺时针
+CCW	counter-clockwise	逆时针
+顺时针和逆时针的作用。
+序号	作用
+1	在添加图形时确定闭合顺序(各个点的记录顺序)
+2	对图形的渲染结果有影响(是判断图形渲染的重要条件)
+添加一个矩形试试看：
+        canvas.translate(mWidth / 2, mHeight / 2);  // 移动坐标系到屏幕中心
+        Path path = new Path();
+        path.addRect(-200,-200,200,200, Path.Direction.CW);
+        canvas.drawPath(path,mPaint);
+将上面代码的CW改为CCW再运行一次。接下来就是见证奇迹的时刻，两次运行结果一模一样
+这个东东是自带隐身技能的，想要让它现出原形，就要用到咱们刚刚学到的setLastPoint(重置当前最后一个点的位置)。
+        canvas.translate(mWidth / 2, mHeight / 2);  // 移动坐标系到屏幕中心
+        Path path = new Path();
+        path.addRect(-200,-200,200,200, Path.Direction.CW);
+        path.setLastPoint(-300,300);                // <-- 重置最后一个点的位置
+        canvas.drawPath(path,mPaint);
+Path是封装了由直线和曲线(二次，三次贝塞尔曲线)构成的几何路径。其中曲线部分用的是贝塞尔曲线，稍后再讲。 然而除了
+曲线部分就只剩下直线了，对于直线的存储最简单的就是记录坐标点，然后直接连接各个点就行了。虽然记录矩形只需要两个点，
+但是如果只用两个点来记录一个矩形的话，就要额外增加一个标志位来记录这是一个矩形，显然对于存储和解析都是很不划算的事情，
+将矩形转换为直线，为的就是存储记录方便。
+图形在实际记录中就是记录各个的点，对于一个图形来说肯定有多个点，既然有这么多的点，肯定就需要一个先后顺序，这里顺时针和
+逆时针就是用来确定记录这些点的顺序的。
+对于上面这个矩形来说，我们采用的是顺时针(CW)，所以记录的点的顺序就是 A -> B -> C -> D. 最后一个点就是D，我们这里使用setLastPoint
+改变最后一个点的位置实际上是改变了D的位置。
+理解了上面的原理之后，设想如果我们将顺时针改为逆时针(CCW)，则记录点的顺序应该就是 A -> D -> C -> B, 再使用setLastPoint则改变的是B的位置
 
+我们用两个点的坐标确定了一个矩形，矩形起始点(A)就是我们指定的第一个点的坐标。
+需要注意的是，交换坐标点的顺序可能就会影响到某些绘制内容哦，例如上面的例子，你可以尝试交换两个坐标点，或者指定另外两个点来作为参数，
+虽然指定的是同一个矩形，但实际绘制出来是不同的哦。
+参数中点的顺序很重要！
 
+第二类(Path)
+方法预览：
+// 第二类(Path)
+    // path
+    public void addPath (Path src)
+    public void addPath (Path src, float dx, float dy)
+    public void addPath (Path src, Matrix matrix)
+这个相对比较简单，也很容易理解，就是将两个Path合并成为一个。
+这个相对比较简单，也很容易理解，就是将两个Path合并成为一个。
+第三个方法是将src添加到当前path之前先使用Matrix进行变换。
+第二个方法比第一个方法多出来的两个参数是将src进行了位移之后再添加进当前path中。
+示例：
+        canvas.translate(mWidth / 2, mHeight / 2);  // 移动坐标系到屏幕中心
+        canvas.scale(1,-1);                         // <-- 注意 翻转y坐标轴
+        Path path = new Path();
+        Path src = new Path();
+        path.addRect(-200,-200,200,200, Path.Direction.CW);
+        src.addCircle(0,0,100, Path.Direction.CW);
+        path.addPath(src,0,200);
+        mPaint.setColor(Color.BLACK);           // 绘制合并后的路径
+        canvas.drawPath(path,mPaint);
+第三类(addArc与arcTo)
+方法预览：
+// 第三类(addArc与arcTo)
+    // addArc
+    public void addArc (RectF oval, float startAngle, float sweepAngle)
+    // arcTo
+    public void arcTo (RectF oval, float startAngle, float sweepAngle)
+    public void arcTo (RectF oval, float startAngle, float sweepAngle, boolean forceMoveTo)
+从名字就可以看出，这两个方法都是与圆弧相关的，作用都是添加一个圆弧到path中，但既然存在两个方法，两者之间肯定是有区别的：
+名称	作用	区别
+addArc	添加一个圆弧到path	直接添加一个圆弧到path中
+arcTo	添加一个圆弧到path	添加一个圆弧到path，如果圆弧的起点和上次最后一个坐标点不相同，就连接两个点
+forceMoveTo是什么作用呢？
+这个变量意思为“是否强制使用moveTo”，也就是说，是否使用moveTo将变量移动到圆弧的起点位移，也就意味着：
+forceMoveTo	含义	等价方法
+true	将最后一个点移动到圆弧起点，即不连接最后一个点与圆弧起点	public void addArc (RectF oval, float startAngle, float sweepAngle)
+false	不移动，而是连接最后一个点与圆弧起点	public void arcTo (RectF oval, float startAngle, float sweepAngle)
 
-
-
-
-
-
-
-
-
-
+示例(addArc)：
+        canvas.translate(mWidth / 2, mHeight / 2);  // 移动坐标系到屏幕中心
+        canvas.scale(1,-1);                         // <-- 注意 翻转y坐标轴
+        Path path = new Path();
+        path.lineTo(100,100);
+        RectF oval = new RectF(0,0,300,300);
+        path.addArc(oval,0,270);
+        // path.arcTo(oval,0,270,true);             // <-- 和上面一句作用等价
+        canvas.drawPath(path,mPaint);
+示例(arcTo)：
+        canvas.translate(mWidth / 2, mHeight / 2);  // 移动坐标系到屏幕中心
+        canvas.scale(1,-1);                         // <-- 注意 翻转y坐标轴
+        Path path = new Path();
+        path.lineTo(100,100);
+        RectF oval = new RectF(0,0,300,300);
+        path.arcTo(oval,0,270);
+        // path.arcTo(oval,0,270,false);             // <-- 和上面一句作用等价
+        canvas.drawPath(path,mPaint);
 
 
     */
