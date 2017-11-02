@@ -90,6 +90,12 @@ public class CanvasView extends View {
             canvas.drawLine(0,180,0,200,mPaint);
             canvas.rotate(10);
         }
+
+        canvas.rotate(-10); // 转回去
+        canvas.translate(0,300);
+        canvas.skew(1,0);
+        rect = new RectF(0,200,200,0);
+        canvas.drawRect(rect,mPaint);
     }
 
 
