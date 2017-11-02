@@ -23,6 +23,14 @@ public class BezierPathView extends View {
     int centerX,centerY;
     PointF start,end,control;
 
+    private static final float C = 0.551915024494f;     // 一个常量，用来计算绘制圆形贝塞尔曲线控制点的位置
+    PointF d1=new PointF(),d2=new PointF(),d3=new PointF(),d4=new PointF();
+    PointF c1=new PointF(),c2=new PointF(),c3=new PointF(),c4=new PointF(),
+            c5=new PointF(),c6=new PointF(),c7=new PointF(),c8=new PointF();
+    private float R = 200;                  // 圆的半径
+    private float mDifference = R*C;        // 圆形的控制点与数据点的差值
+    float Yoffset =  R+100;
+
     public BezierPathView(Context context){
         this(context,null);
     }
@@ -40,6 +48,37 @@ public class BezierPathView extends View {
         start = new PointF(0,0);
         end = new PointF(0,0);
         control = new PointF(0,0);
+
+        d1.x = 0;
+        d1.y = -R + Yoffset;
+        d2.x = R;
+        d2.y = 0+ Yoffset;
+        d3.x = 0;
+        d3.y = R+ Yoffset;
+        d4.x = -R;
+        d4.y = 0+ Yoffset;
+
+        c1.x = d1.x + mDifference;
+        c1.y = d1.y;
+        c2.x = d2.x;
+        c2.y = d2.y - mDifference;
+
+        c3.x = d2.x;
+        c3.y = d2.y + mDifference;
+        c4.x = d3.x + mDifference;
+        c4.y = d3.y;
+
+        c5.x = d3.x - mDifference;
+        c5.y = d3.y;
+        c6.x = d4.x;
+        c6.y = d4.y + mDifference;
+
+        c7.x = d4.x;
+        c7.y = d4.y - mDifference;
+        c8.x = d1.x - mDifference;
+        c8.y = d1.y;
+
+
     }
 
     @Override
@@ -63,6 +102,9 @@ public class BezierPathView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if(event.getY()>50){
+            return false;
+        }
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
                 control.x = event.getX();
@@ -106,6 +148,15 @@ public class BezierPathView extends View {
         path.moveTo(start.x,start.y);
         path.quadTo(control.x,control.y,end.x,end.y);
         canvas.drawPath(path,mPaint);
+
+        canvas.translate(mWidth/2,mHeight/2);
+        Path heart = new Path();
+        heart.moveTo(d1.x,d1.y);
+        heart.cubicTo(c1.x,c1.y,c2.x,c2.y,d2.x,d2.y);
+        heart.cubicTo(c3.x,c3.y,c4.x,c4.y,d3.x,d3.y);
+        heart.cubicTo(c5.x,c5.y,c6.x,c6.y,d4.x,d4.y);
+        heart.cubicTo(c7.x,c7.y,c8.x,c8.y,d1.x,d1.y);
+        canvas.drawPath(heart,mPaint);
 
     }
 
