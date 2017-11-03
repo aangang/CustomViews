@@ -11,6 +11,8 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.aaangang.customviews.utils.Tools;
+
 /**
  * Created by Administrator on 2017/11/1.
  */
@@ -19,6 +21,11 @@ public class BezierPathView extends View {
     private int mWidth,mHeight;
     private Paint mPaint = new Paint();
     private Paint basePaint = new Paint();
+
+    private float mDuration = 1000;                     // 变化总时长
+    private float mCurrent = 0;                         // 当前已进行时长
+    private float mCount = 100;                         // 将时长总共划分多少份
+    private float mPiece = mDuration/mCount;            // 每一份的时长
 
     int centerX,centerY;
     PointF start,end,control;
@@ -102,7 +109,10 @@ public class BezierPathView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if(event.getY()>50){
+        if(event.getY()>mHeight/2 + 50){
+            Tools.log("y > 50 return false");
+            control.x = centerX;
+            control.y = centerY -100;
             return false;
         }
         switch (event.getAction()){
@@ -149,7 +159,33 @@ public class BezierPathView extends View {
         path.quadTo(control.x,control.y,end.x,end.y);
         canvas.drawPath(path,mPaint);
 
+
         canvas.translate(mWidth/2,mHeight/2);
+        mPaint.setColor(Color.GRAY);
+        mPaint.setStrokeWidth(20);
+        canvas.drawPoint(d1.x,d1.y,mPaint);
+        canvas.drawPoint(d2.x,d2.y,mPaint);
+        canvas.drawPoint(d3.x,d3.y,mPaint);
+        canvas.drawPoint(d4.x,d4.y,mPaint);
+        canvas.drawPoint(c1.x,c1.y,mPaint);
+        canvas.drawPoint(c2.x,c2.y,mPaint);
+        canvas.drawPoint(c3.x,c3.y,mPaint);
+        canvas.drawPoint(c4.x,c4.y,mPaint);
+        canvas.drawPoint(c5.x,c5.y,mPaint);
+        canvas.drawPoint(c6.x,c6.y,mPaint);
+        canvas.drawPoint(c7.x,c7.y,mPaint);
+        canvas.drawPoint(c8.x,c8.y,mPaint);
+
+        mPaint.setColor(Color.GRAY);
+        mPaint.setStrokeWidth(5);
+        canvas.drawLine(c8.x,c8.y,c1.x,c1.y,mPaint);
+        canvas.drawLine(c2.x,c2.y,c3.x,c3.y,mPaint);
+        canvas.drawLine(c4.x,c4.y,c5.x,c5.y,mPaint);
+        canvas.drawLine(c6.x,c6.y,c7.x,c7.y,mPaint);
+
+        mPaint.setColor(Color.RED);
+        mPaint.setStrokeWidth(10);
+
         Path heart = new Path();
         heart.moveTo(d1.x,d1.y);
         heart.cubicTo(c1.x,c1.y,c2.x,c2.y,d2.x,d2.y);
