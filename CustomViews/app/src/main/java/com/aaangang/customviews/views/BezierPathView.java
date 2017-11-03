@@ -26,6 +26,7 @@ public class BezierPathView extends View {
     private float mCurrent = 0;                         // 当前已进行时长
     private float mCount = 100;                         // 将时长总共划分多少份
     private float mPiece = mDuration/mCount;            // 每一份的时长
+    private  boolean biger = true;
 
     int centerX,centerY;
     PointF start,end,control;
@@ -56,6 +57,12 @@ public class BezierPathView extends View {
         end = new PointF(0,0);
         control = new PointF(0,0);
 
+        initDataCtrlPoints();
+
+
+    }
+
+    void initDataCtrlPoints(){
         d1.x = 0;
         d1.y = -R + Yoffset;
         d2.x = R;
@@ -84,8 +91,6 @@ public class BezierPathView extends View {
         c7.y = d4.y - mDifference;
         c8.x = d1.x - mDifference;
         c8.y = d1.y;
-
-
     }
 
     @Override
@@ -113,6 +118,7 @@ public class BezierPathView extends View {
             Tools.log("y > 50 return false");
             control.x = centerX;
             control.y = centerY -100;
+            invalidate();
             return false;
         }
         switch (event.getAction()){
@@ -159,8 +165,52 @@ public class BezierPathView extends View {
         path.quadTo(control.x,control.y,end.x,end.y);
         canvas.drawPath(path,mPaint);
 
+        drawHeart(canvas);
+
+        //set points
+
+        if(biger) {
+            mCurrent += mPiece;
+            if (mCurrent < mDuration) {
+
+                d1.y += 120 / mCount;
+                c4.y -= 80 / mCount;
+                c5.y -= 80 / mCount;
+                c3.x -= 20 / mCount;
+                c6.x += 20 / mCount;
+                postInvalidateDelayed((long) mPiece);
+            } else if(mCurrent >= mDuration){
+                //mCurrent = 0;
+                //initDataCtrlPoints();
+                biger = false;
+                postInvalidateDelayed((long) 300);
+            }
+        }
+        if(!biger){
+            mCurrent -= mPiece;
+            if(mCurrent >0){
+                d1.y -= 120 / mCount;
+                c4.y += 80 / mCount;
+                c5.y += 80 / mCount;
+                c3.x += 20 / mCount;
+                c6.x -= 20 / mCount;
+                postInvalidateDelayed((long) mPiece);
+            }else if(mCurrent <= 0){
+                //mCurrent = 0;
+                //initDataCtrlPoints();
+                biger = true;
+                postInvalidateDelayed((long) 300);
+            }
+        }
+
+    }
+
+    private void drawHeart(Canvas canvas){
+        canvas.save();
 
         canvas.translate(mWidth/2,mHeight/2);
+        canvas.scale((float) 0.5,(float) 0.5);
+        canvas.translate(0,500);
         mPaint.setColor(Color.GRAY);
         mPaint.setStrokeWidth(20);
         canvas.drawPoint(d1.x,d1.y,mPaint);
@@ -194,6 +244,7 @@ public class BezierPathView extends View {
         heart.cubicTo(c7.x,c7.y,c8.x,c8.y,d1.x,d1.y);
         canvas.drawPath(heart,mPaint);
 
+        canvas.restore();
     }
 
     private void drawBaseLines(Canvas canvas){
