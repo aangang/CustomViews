@@ -186,6 +186,19 @@ public class SearchView extends View {
 
     }
 
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        startAnimator.removeAllListeners();
+        startAnimator.cancel();
+        searchAnimator.removeAllListeners();
+        searchAnimator.cancel();
+        endAnimator.removeAllListeners();
+        endAnimator.cancel();
+
+
+    }
+
     void drawSearchPath(Canvas canvas){
         if(mState == STATE.STARTING){
             mMeasure.setPath(pathSearch,false);

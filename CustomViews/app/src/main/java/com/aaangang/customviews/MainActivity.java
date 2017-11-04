@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.aaangang.customviews.activitys.MyViewEightMitrix;
 import com.aaangang.customviews.activitys.MyViewFivBezier;
 import com.aaangang.customviews.activitys.MyViewForthPath;
 import com.aaangang.customviews.activitys.MyViewFst;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity
                         .setAction("Action", null).show();
             }
         });
+        fab.setVisibility(View.INVISIBLE);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -145,7 +147,7 @@ public class MainActivity extends AppCompatActivity
         }else if (id == R.id.myview8) {
             Tools.log("myview8");
             Tools.toast(MainActivity.this,"myview 8");
-            mIntent = new Intent(MainActivity.this, MyViewFivBezier.class);
+            mIntent = new Intent(MainActivity.this, MyViewEightMitrix.class);
             startActivity(mIntent);
         }else if (id == R.id.myview9) {
             Tools.log("myview9");

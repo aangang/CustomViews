@@ -62,6 +62,47 @@
                 android:id="@+id/myview10"
                 android:icon="@drawable/icon10"
                 android:title="view10" />
+
+            <item
+                android:id="@+id/myview11"
+                android:icon="@drawable/img0"
+                android:title="view11" />
+            <item
+                android:id="@+id/myview12"
+                android:icon="@drawable/img1"
+                android:title="view12" />
+            <item
+                android:id="@+id/myview13"
+                android:icon="@drawable/img2"
+                android:title="view13" />
+            <item
+                android:id="@+id/myview14"
+                android:icon="@drawable/img4"
+                android:title="view14" />
+            <item
+                android:id="@+id/myview15"
+                android:icon="@drawable/img5"
+                android:title="view15" />
+            <item
+                android:id="@+id/myview16"
+                android:icon="@drawable/img6"
+                android:title="view16" />
+            <item
+                android:id="@+id/myview17"
+                android:icon="@drawable/img7"
+                android:title="view17" />
+            <item
+                android:id="@+id/myview18"
+                android:icon="@drawable/img8"
+                android:title="view18" />
+            <item
+                android:id="@+id/myview19"
+                android:icon="@drawable/img9"
+                android:title="view19" />
+            <item
+                android:id="@+id/myview20"
+                android:icon="@drawable/img0"
+                android:title="view20" />
         </menu>
     </item>
 
