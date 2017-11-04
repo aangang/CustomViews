@@ -1,15 +1,20 @@
 package com.aaangang.customviews.views;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
 import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.aaangang.customviews.R;
 import com.aaangang.customviews.utils.Tools;
 
 /**
@@ -20,6 +25,20 @@ public class PathMeasureView extends View {
     private int mWidth,mHeight;
     private Paint mPaint = new Paint();
     private Paint basePaint = new Paint();
+
+    Bitmap arrow;
+    float[] pos,tan;
+    float currentValue = 0;  //0——1
+    Matrix matrix;
+
+    int mDuration = 3000;
+    int mCount = 100;
+    float mPathLen = 0;
+    private float mPiece = mDuration/mCount;            // 每一份的时长
+    private float mPieceLen = 0;
+    float mCurrentLen = 0;
+
+    Path mPath;
 
     public PathMeasureView(Context context){
         this(context,null);
@@ -34,6 +53,21 @@ public class PathMeasureView extends View {
         basePaint.setColor(Color.GRAY);
         basePaint.setStrokeWidth(5);
         basePaint.setStyle(Paint.Style.STROKE);
+
+        pos = new float[2];
+        tan = new float[2];
+        matrix = new Matrix();
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = 12;
+        arrow = BitmapFactory.decodeResource(getResources(), R.drawable.arrow,options);
+
+        mPath = new Path();
+        RectF rect = new RectF(-100,-500,100,500);
+        mPath.addOval(rect, Path.Direction.CW);
+        PathMeasure measure1 = new PathMeasure(mPath,false);
+        mPathLen = measure1.getLength();
+        mPieceLen = mPathLen/mCount;
+
     }
 
     @Override
@@ -60,7 +94,7 @@ public class PathMeasureView extends View {
         measure.getSegment(300,900,dst,true);//是否move to path 的 start点
         canvas.drawPath(dst,mPaint);*/
 
-        Path path1 = new Path();
+        /*Path path1 = new Path();
         path1.addRect(-100,-100,100,100, Path.Direction.CW);
         path1.addRect(-200,200,200,600, Path.Direction.CW);
         PathMeasure measure = new PathMeasure(path1, false);     // 将Path与PathMeasure关联
@@ -73,9 +107,35 @@ public class PathMeasureView extends View {
         float len2 = measure.getLength();                       // 获得第二条路径的长度
         Tools.log("len2:" + len2);
         measure.getSegment(278,876,dst1,true);
-        canvas.drawPath(dst1,mPaint);
+        canvas.drawPath(dst1,mPaint);*/
 
 
+        PathMeasure measure = new PathMeasure(mPath,false);
+        /*currentValue += 0.005;
+        if(currentValue>=1){
+            currentValue =0;
+        }*/
+
+        mCurrentLen += mPieceLen;
+        if(mCurrentLen >= mPathLen){
+            mCurrentLen = 0;
+        }
+
+        //measure.getPosTan(measure.getLength()*currentValue,pos,tan);
+        //measure.getPosTan(mCurrentLen,pos,tan);
+        //double rot = Math.atan2(tan[1],tan[0])*180/Math.PI;
+        //matrix.reset();
+        //matrix.postRotate((float)rot,arrow.getWidth()/2,arrow.getHeight()/2);
+        //matrix.postTranslate(pos[0]-arrow.getWidth()/2,pos[1]-arrow.getHeight()/2);
+        // 获取当前位置的坐标以及趋势的矩阵
+        measure.getMatrix(mCurrentLen, matrix, PathMeasure.TANGENT_MATRIX_FLAG | PathMeasure.POSITION_MATRIX_FLAG);
+        matrix.preTranslate(-arrow.getWidth()/2,-arrow.getHeight()/2);
+        canvas.drawPath(mPath,mPaint);
+        canvas.drawBitmap(arrow,matrix,mPaint);
+
+
+        //invalidate();
+        postInvalidateDelayed((long)mPiece);
     }
 
     private void drawBaseLines(Canvas canvas){
