@@ -42,6 +42,10 @@
             android:name=".activitys.MyViewSixPathMeasure"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
+        <activity
+            android:name=".activitys.MyViewSevSearchPath"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>

@@ -19,6 +19,7 @@ import com.aaangang.customviews.activitys.MyViewFivBezier;
 import com.aaangang.customviews.activitys.MyViewForthPath;
 import com.aaangang.customviews.activitys.MyViewFst;
 import com.aaangang.customviews.activitys.MyViewScd;
+import com.aaangang.customviews.activitys.MyViewSevSearchPath;
 import com.aaangang.customviews.activitys.MyViewSixPathMeasure;
 import com.aaangang.customviews.activitys.MyViewTrd;
 import com.aaangang.customviews.utils.Tools;
@@ -134,6 +135,21 @@ public class MainActivity extends AppCompatActivity
         }else if (id == R.id.myview6) {
             Tools.log("myview6");
             Tools.toast(MainActivity.this,"myview 6");
+            mIntent = new Intent(MainActivity.this, MyViewSixPathMeasure.class);
+            startActivity(mIntent);
+        }else if (id == R.id.myview7) {
+            Tools.log("myview7");
+            Tools.toast(MainActivity.this,"myview 7");
+            mIntent = new Intent(MainActivity.this, MyViewSevSearchPath.class);
+            startActivity(mIntent);
+        }else if (id == R.id.myview8) {
+            Tools.log("myview8");
+            Tools.toast(MainActivity.this,"myview 8");
+            mIntent = new Intent(MainActivity.this, MyViewFivBezier.class);
+            startActivity(mIntent);
+        }else if (id == R.id.myview9) {
+            Tools.log("myview9");
+            Tools.toast(MainActivity.this,"myview 9");
             mIntent = new Intent(MainActivity.this, MyViewSixPathMeasure.class);
             startActivity(mIntent);
         }
