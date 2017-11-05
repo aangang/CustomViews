@@ -19,6 +19,7 @@ import com.aaangang.customviews.activitys.MyViewEightMitrix;
 import com.aaangang.customviews.activitys.MyViewFivBezier;
 import com.aaangang.customviews.activitys.MyViewForthPath;
 import com.aaangang.customviews.activitys.MyViewFst;
+import com.aaangang.customviews.activitys.MyViewGroupTest;
 import com.aaangang.customviews.activitys.MyViewNighMitrixCamera;
 import com.aaangang.customviews.activitys.MyViewScd;
 import com.aaangang.customviews.activitys.MyViewSevSearchPath;
@@ -153,6 +154,60 @@ public class MainActivity extends AppCompatActivity
         }else if (id == R.id.myview9) {
             Tools.log("myview9");
             Tools.toast(MainActivity.this,"myview 9");
+            mIntent = new Intent(MainActivity.this, MyViewNighMitrixCamera.class);
+            startActivity(mIntent);
+        }
+
+        else if (id == R.id.myview10) {
+            Tools.log("myview10");
+            Tools.toast(MainActivity.this,"myview 10");
+            mIntent = new Intent(MainActivity.this, MyViewGroupTest.class);
+            startActivity(mIntent);
+        }
+
+        else if (id == R.id.myview11) {
+            Tools.log("myview1");
+            Tools.toast(MainActivity.this,"myview 11");
+            mIntent = new Intent(MainActivity.this, MyViewFst.class);
+            startActivity(mIntent);
+        }else if (id == R.id.myview12) {
+            Tools.log("myview12");
+            Tools.toast(MainActivity.this,"myview 12");
+            mIntent = new Intent(MainActivity.this, MyViewScd.class);
+            startActivity(mIntent);
+        }else if (id == R.id.myview13) {
+            Tools.log("myview13");
+            Tools.toast(MainActivity.this,"myview 13");
+            mIntent = new Intent(MainActivity.this, MyViewTrd.class);
+            startActivity(mIntent);
+        }else if (id == R.id.myview14) {
+            Tools.log("myview14");
+            Tools.toast(MainActivity.this,"myview 14");
+            mIntent = new Intent(MainActivity.this, MyViewForthPath.class);
+            startActivity(mIntent);
+        }else if (id == R.id.myview15) {
+            Tools.log("myview15");
+            Tools.toast(MainActivity.this,"myview 15");
+            mIntent = new Intent(MainActivity.this, MyViewFivBezier.class);
+            startActivity(mIntent);
+        }else if (id == R.id.myview16) {
+            Tools.log("myview16");
+            Tools.toast(MainActivity.this,"myview 16");
+            mIntent = new Intent(MainActivity.this, MyViewSixPathMeasure.class);
+            startActivity(mIntent);
+        }else if (id == R.id.myview17) {
+            Tools.log("myview17");
+            Tools.toast(MainActivity.this,"myview 17");
+            mIntent = new Intent(MainActivity.this, MyViewSevSearchPath.class);
+            startActivity(mIntent);
+        }else if (id == R.id.myview18) {
+            Tools.log("myview18");
+            Tools.toast(MainActivity.this,"myview 18");
+            mIntent = new Intent(MainActivity.this, MyViewEightMitrix.class);
+            startActivity(mIntent);
+        }else if (id == R.id.myview19) {
+            Tools.log("myview19");
+            Tools.toast(MainActivity.this,"myview 19");
             mIntent = new Intent(MainActivity.this, MyViewNighMitrixCamera.class);
             startActivity(mIntent);
         }
