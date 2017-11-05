@@ -19,6 +19,7 @@ import com.aaangang.customviews.activitys.MyViewEightMitrix;
 import com.aaangang.customviews.activitys.MyViewFivBezier;
 import com.aaangang.customviews.activitys.MyViewForthPath;
 import com.aaangang.customviews.activitys.MyViewFst;
+import com.aaangang.customviews.activitys.MyViewNighMitrixCamera;
 import com.aaangang.customviews.activitys.MyViewScd;
 import com.aaangang.customviews.activitys.MyViewSevSearchPath;
 import com.aaangang.customviews.activitys.MyViewSixPathMeasure;
@@ -152,7 +153,7 @@ public class MainActivity extends AppCompatActivity
         }else if (id == R.id.myview9) {
             Tools.log("myview9");
             Tools.toast(MainActivity.this,"myview 9");
-            mIntent = new Intent(MainActivity.this, MyViewSixPathMeasure.class);
+            mIntent = new Intent(MainActivity.this, MyViewNighMitrixCamera.class);
             startActivity(mIntent);
         }
 

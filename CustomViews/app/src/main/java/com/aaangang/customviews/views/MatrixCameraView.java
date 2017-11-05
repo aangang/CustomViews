@@ -7,8 +7,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -17,20 +15,20 @@ import com.aaangang.customviews.R;
 /**
  * Created by Administrator on 2017/11/1.
  */
-public class MatrixView extends View {
+public class MatrixCameraView extends View {
 
     private int mWidth,mHeight;
     private Paint mPaint = new Paint();
     private Paint basePaint = new Paint();
 
-    private Matrix mPolyMatrix;
+    private Matrix mMatrix;
     private Bitmap mBitmap;
 
-    public MatrixView(Context context){
+    public MatrixCameraView(Context context){
         this(context,null);
     }
 
-    public MatrixView(Context context, AttributeSet attrs){
+    public MatrixCameraView(Context context, AttributeSet attrs){
         super(context,attrs);
         mPaint.setColor(Color.BLUE);
         mPaint.setStyle(Paint.Style.STROKE);
@@ -45,24 +43,10 @@ public class MatrixView extends View {
 
     void initBitmapAndMatrix (Context context){
         mBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.myhead);
-        mPolyMatrix = new Matrix();
-        float[] src = {
-                0,0,
-                mBitmap.getWidth(),0,
-                0,mBitmap.getHeight(),
-                mBitmap.getWidth(),mBitmap.getHeight()
-        };
-        float[] dst = {
-                0,0,
-                mBitmap.getWidth(),-200,
-                0,mBitmap.getHeight(),
-                mBitmap.getWidth(),mBitmap.getHeight()+100
-        };
+        mMatrix = new Matrix();
 
-        mPolyMatrix.setPolyToPoly(src,0,dst,0,src.length >>1);
-
-        mPolyMatrix.postScale(0.8f,0.8f);
-        mPolyMatrix.postTranslate(-400,-400);
+        mMatrix.postScale(0.8f,0.8f);
+        mMatrix.postTranslate(-400,-400);
 
 
     }
@@ -81,7 +65,7 @@ public class MatrixView extends View {
         canvas.translate(mWidth/2,mHeight/2);
         drawBaseLines(canvas);
 
-        canvas.drawBitmap(mBitmap,mPolyMatrix,null);
+        canvas.drawBitmap(mBitmap,mMatrix,null);
 
 
     }

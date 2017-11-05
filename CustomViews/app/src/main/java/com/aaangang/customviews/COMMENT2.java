@@ -1,4 +1,4 @@
-package com.aaangang.customviews.views;
+package com.aaangang.customviews;
 
 /**
  * Created by Administrator on 2017/11/1.
@@ -377,21 +377,142 @@ pointCount	摘要
 作用范围当然是设置了Matrix的全部区域，如果你将这个Matrix赋值给了Canvas，它的作用范围就是整个画布，如果你赋值给了Bitmap，它的作
 用范围就是整张图片。
 
+接下来用示例演示一下，所有示例的src均为图片大小，dst根据手势变化。
+pointCount为0
+pointCount为0和reset是等价的，而不是保持matrix不变，在最底层的实现中可以看到这样的代码：
+if (0 == count) {
+    this->reset();
+    return true;
+}
+
+pointCount为1
+pointCount为0和translate是等价的，在最底层的实现中可以看到这样的代码：
+if (1 == count) {
+    this->setTranslate(dst[0].fX - src[0].fX, dst[0].fY - src[0].fY);
+    return true;
+}
+平移的距离是dst - src.
+当测控点为1的时候，由于你只有一个点可以控制，所以你只能拖拽着它在2D平面上滑动。
+
+pointCount为2
+当pointCount为2的时候，可以做缩放、平移和旋转。
+pointCount为3
+当pointCount为3的时候，可以做缩放、平移、旋转和错切。
+pointCount为4
+当pointCount为4的时候，你可以将图像拉伸为任意四边形。
 
 
+Matrix Camera #################################################################
+众所周知，我们的手机屏幕是一个2D的平面，所以也没办法直接显示3D的信息，因此我们看到的所有3D效果都是3D在2D平面的投影而已，
+而本文中的Camera主要作用就是这个，将3D信息转换为2D平面上的投影，实际上这个类更像是一个操作Matrix的工具类，
+使用Camera和Matrix可以在不使用OpenGL的情况下制作出简单的3D效果。
 
+Camera常用方法表
+方法类别	相关API	简介
+基本方法	save、restore	保存、 回滚
+常用方法	getMatrix、applyToCanvas	获取Matrix、应用到画布
+平移	translate	位移
+旋转	rotat (API 12)、rotateX、rotateY、rotateZ	各种旋转
+相机位置	setLocation (API 12)、getLocationX (API 16)、getLocationY (API 16)、getLocationZ (API 16)	设置与获取相机位置
+Camera的方法并不是特别多，很多内容与之前的讲解的Canvas和Matrix类似，不过又稍有不同，之前的画布操作和Matrix主要是作用于2D空
+间，而Camera则主要作用于3D空间。
 
+基础概念
+在具体讲解方法之前，先补充几个基础概念，以便于后面理解。
+3D坐标系
+我们Camera使用的3维坐标系是左手坐标系，即左手手臂指向x轴正方向，四指弯曲指向y轴正方向，此时展开大拇指指向的方向
+是z轴正方向。
+2D 和 3D 坐标是通过Matrix关联起来的，所以你可以认为两者是同一个坐标系，但又有差别，重点就是y轴方向不同。
+坐标系	2D坐标系	3D坐标系
+原点默认位置	左上角	左上角
+X 轴默认方向	右	右
+Y 轴默认方向	下	上
+Z 轴默认方向	无	垂直屏幕向内
+3D坐标系在屏幕中各个坐标轴默认方向展示:
+注意y轴默认方向是向上，而2D则是向下，另外本图不代表3D坐标系实际位置。
 
+摄像机
+如果你学过Unity，那么你对摄像机这一个概念应该会有比较透彻的理解。在一个虚拟的3D的立体空间中，由于我们无法直接用眼睛去观察这一个空间，
+所以要借助摄像机采集信息，制成2D影像供我们观察。简单来说，摄像机就是我们观察虚拟3D空间的眼睛。
+Android 上面观察View的摄像机默认位置在屏幕左上角，而且是距屏幕有一段距离的，假设灰色部分是手机屏幕，白色是上面的一个
+View，摄像机位置看起来大致就是下面这样子的(为了更好的展示摄像机的位置，做了一个空间转换效果的动图)。
 
+摄像机的位置默认是 (0, 0, -576)。其中 -576＝ -8 x 72，虽然官方文档说距离屏幕的距离是 -8, 但经过测试实际距离是 -576
+ 像素，当距离为 -10 的时候，实际距离为 -720 像素。不过这个数值72我也不明白是什么东西，我使用了3款手机测试，屏幕大小
+ 和像素密度均不同，但结果都是一样的，知道的小伙伴可以告诉我一声。
+基本方法
+基本方法就有两个save 和restore，主要作用为保存当前状态和恢复到上一次保存的状态，通常成对使用，常用格式如下:
+camera.save();		// 保存状态
+... 				// 具体操作
+camera.retore();	// 回滚状态
 
+常用方法
+这两个方法是Camera中最基础也是最常用的方法。
+getMatrix
+void getMatrix (Matrix matrix)
+计算当前状态下矩阵对应的状态，并将计算后的矩阵赋值给参数matrix。
+applyToCanvas
+void applyToCanvas (Canvas canvas)
+计算当前状态下单矩阵对应的状态，并将计算后的矩阵应用到指定的canvas上。
 
+平移
+声明：以下示例中 Matrix 的平移均使用 postTranslate 来演示，实际情况中使用set、pre 或 post 需要视情况而定。
+void translate (float x, float y, float z)
+和2D平移类似，只不过是多出来了一个维度，从只能在2D平面上平移到在3D空间内平移，不过，此处仍有几个要点需要重点对待。
+沿x轴平移
+camera.translate(x, 0, 0);
+matrix.postTranslate(x, 0);
+两者x轴同向，所以 Camera 和 Matrix 在沿x轴平移上是一致的。
+结论:
+一致是指平移方向和平移距离一致，在默认情况下，上面两种均可以让坐标系向右移动x个单位。
+沿y轴平移
+这个就有点意思了，两个坐标系相互关联，但是两者的y轴方向是相反的，很容易把人搞迷糊。你可以这么玩:
+Camera camera = new Camera();
+camera.translate(0, 100, 0);    // camera - 沿y轴正方向平移100像素
+Matrix matrix = new Matrix();
+camera.getMatrix(matrix);
+matrix.postTranslate(0,100);    // matrix - 沿y轴正方向平移100像素
+Log.i(TAG, "Matrix: "+matrix.toShortString());
+在上面这种写法，虽然用了5行代码，但是效果却和 Matrix matrix = new Matrix(); 一样，结果都是单位矩阵。而且看起来貌似
+没有啥问题，毕竟两次平移都是正向100。(如果遇见不懂技术的领导嫌你写代码量少，你可以这样多写几遍，反正一般人是看不出问题的。)
+Matrix: [1.0, 0.0, 0.0][0.0, 1.0, 0.0][0.0, 0.0, 1.0]
+结论:
+由于两者y轴相反，所以 camera.translate(0, -y, 0); 与 matrix.postTranslate(0, y);平移方向和距离一致，在默认情况下，
+这两种方法均可以让坐标系向下移动y个单位。
 
+沿z轴平移
+这个不仅有趣，还容易蒙逼，上面两种情况再怎么闹腾也只是在2D平面上，而z轴的出现则让其有了空间感。
+当View和摄像机在同一条直线上时: 此时沿z轴平移相当于缩放的效果，缩放中心为摄像机所在(x, y)坐标，当View接近摄像机时，
+看起来会变大，远离摄像机时，看起来会变小，近大远小。
+结论:
+关于3D效果的平移说起来比较麻烦，但你可以自己实际的体验一下，毕竟我们是生活在3D空间的，拿一张纸片来模拟View，用眼睛当做摄像机，
+在眼前来回移动纸片，多试几次大致就明白是怎么回事了。
+平移	重点内容
+x轴	2D 和 3D 相同。
+y轴	2D 和 3D 相反。
+z轴	近大远小、视线相交。
 
+旋转
+旋转是Camera制作3D效果的核心，不过它制作出来的并不能算是真正的3D，而是伪3D，因为View是没有厚度的。
+// (API 12) 可以控制View同时绕x，y，z轴旋转，可以由下面几种方法复合而来。
+void rotate (float x, float y, float z);
+// 控制View绕单个坐标轴旋转
+void rotateX (float deg);
+void rotateY (float deg);
+void rotateZ (float deg);
+这个东西瞎扯理论也不好理解，直接上图:
 
-
-
-
-
+以上三张图分别为，绕x轴，y轴，z轴旋转的情况，至于为什么没有显示z轴，是因为z轴是垂直于手机屏幕的，在屏幕上的投影就是一个点。
+关于旋转，有以下几点需要注意:
+默认旋转中心
+旋转中心默认是坐标原点，对于图片来说就是左上角位置。
+如何控制旋转中心
+我们都知道，在2D中，不论是旋转，错切还是缩放都是能够指定操作中心点位置的，但是在3D中却没有默认的方法，如果我们想要让图
+片围绕中心点旋转怎么办? 这就要使用到我们在Matrix原理提到过的方法，虽然当时因为有更好的选择方案，并不提倡这样做:
+Matrix temp = new Matrix();					// 临时Matrix变量
+this.getMatrix(temp);						// 获取Matrix
+temp.preTranslate(-centerX, -centerY);		// 使用pre将旋转中心移动到和Camera位置相同。
+temp.postTranslate(centerX, centerY);		// 使用post将图片(View)移动到原来的位置
 
 
 
